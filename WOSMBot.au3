@@ -30,6 +30,7 @@
 #include <WOSMBot_GuiLog.au3>
 #include <WOSMBot_lstKolejnosc.au3>
 #include <WOSMBot_DaneWejsciowe.au3>
+#include <WOSMBot_WinHttp.au3>
 ;#include <test.au3>
 #include <BotOSM.au3>
 #include <BotWSM.au3>
@@ -37,7 +38,7 @@
 Opt("GUIOnEventMode", 1) ;zezwolenie na działanie funkcji onEvent
 Opt("GUICloseOnESC", 1) ;po wcisnieciu ESC gui sie zamyka
 
-HotKeySet("{F6}", "Form1Close")
+HotKeySet("{F6}", "WOSMBotClose")
 HotKeySet("{F4}", "pauzaSzybkaBot")
 
 
@@ -47,12 +48,12 @@ HotKeySet("{F4}", "pauzaSzybkaBot")
 ;#############################################################################################################################
 ;#############################################################################################################################
 
-#Region ### START Koda GUI section ### Form=C:\Users\Mateusz Błaszczak\Desktop\Bramka\()AUTOIT\GUI\Form1_1.kxf
-$WOSMBot = GUICreate("Bot do wywoływania/odkładania skutków magazynowych", 662, 530, -1, -1)
-GUISetOnEvent($GUI_EVENT_CLOSE, "Form1Close")
-GUISetOnEvent($GUI_EVENT_MINIMIZE, "Form1Minimize")
-GUISetOnEvent($GUI_EVENT_MAXIMIZE, "Form1Maximize")
-GUISetOnEvent($GUI_EVENT_RESTORE, "Form1Restore")
+#Region ### START Koda GUI section ### Form=
+$WOSMBot = GUICreate("Bot do wywoływania/odkładania skutków magazynowych", 662, 537, -1, -1)
+GUISetOnEvent($GUI_EVENT_CLOSE, "WOSMBotClose")
+GUISetOnEvent($GUI_EVENT_MINIMIZE, "WOSMBotMinimize")
+GUISetOnEvent($GUI_EVENT_MAXIMIZE, "WOSMBotMaximize")
+GUISetOnEvent($GUI_EVENT_RESTORE, "WOSMBotRestore")
 $Group1 = GUICtrlCreateGroup("Czynność", 8, 0, 225, 73)
 $radioOdkladanie = GUICtrlCreateRadio("Odkładanie skutków magazynowych", 18, 22, 193, 17)
 GUICtrlSetState($radioOdkladanie, $GUI_CHECKED)
@@ -70,23 +71,25 @@ GUICtrlSetOnEvent($dataDo, "dataDoChange")
 $Label1 = GUICtrlCreateLabel("Od:", 24, 104, 21, 17)
 $Label2 = GUICtrlCreateLabel("Do:", 24, 136, 21, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$Group3 = GUICtrlCreateGroup("Dokumenty", 8, 248, 225, 233)
+$Group3 = GUICtrlCreateGroup("Dokumenty", 8, 248, 225, 249)
 $chckSprzedazDetaliczna = GUICtrlCreateCheckbox("Sprzedaż detaliczna", 24, 272, 121, 17)
 GUICtrlSetOnEvent($chckSprzedazDetaliczna, "chckSprzedazDetalicznaClick")
-$chckWydMag = GUICtrlCreateCheckbox("Wydania magazynowe", 24, 296, 129, 17)
+$chckWydMag = GUICtrlCreateCheckbox("Wydania magazynowe", 24, 320, 129, 17)
 GUICtrlSetOnEvent($chckWydMag, "chckWydMagClick")
-$chckWydMagRozchodWewnetrzny = GUICtrlCreateCheckbox("Rozchód wewnętrzny", 40, 320, 129, 17)
+$chckWydMagRozchodWewnetrzny = GUICtrlCreateCheckbox("Rozchód wewnętrzny", 40, 344, 129, 17)
 GUICtrlSetOnEvent($chckWydMagRozchodWewnetrzny, "chckWydMagRozchodWewnetrznyClick")
-$chckWydMagPrzesuniecieMiedzymagazynowe = GUICtrlCreateCheckbox("Przesunięcie międzymagazynowe", 40, 344, 177, 17)
+$chckWydMagPrzesuniecieMiedzymagazynowe = GUICtrlCreateCheckbox("Przesunięcie międzymagazynowe", 40, 368, 177, 17)
 GUICtrlSetOnEvent($chckWydMagPrzesuniecieMiedzymagazynowe, "chckWydMagPrzesuniecieMiedzymagazynoweClick")
-$chckPrzyjMag = GUICtrlCreateCheckbox("Przyjęcia magazynowe", 24, 368, 129, 17)
+$chckPrzyjMag = GUICtrlCreateCheckbox("Przyjęcia magazynowe", 24, 392, 129, 17)
 GUICtrlSetOnEvent($chckPrzyjMag, "chckPrzyjMagClick")
-$chckPrzyjMagPrzychodWewnetrzny = GUICtrlCreateCheckbox("Przychód wewnętrzny", 40, 392, 153, 17)
+$chckPrzyjMagPrzychodWewnetrzny = GUICtrlCreateCheckbox("Przychód wewnętrzny", 40, 416, 153, 17)
 GUICtrlSetOnEvent($chckPrzyjMagPrzychodWewnetrzny, "chckPrzyjMagPrzychodWewnetrznyClick")
-$chckZwrotyDetaliczne = GUICtrlCreateCheckbox("Zwroty detaliczne", 24, 416, 105, 17)
+$chckZwrotyDetaliczne = GUICtrlCreateCheckbox("Zwroty detaliczne", 24, 440, 105, 17)
 GUICtrlSetOnEvent($chckZwrotyDetaliczne, "chckZwrotyDetaliczneClick")
+$chckFakturyZakupu = GUICtrlCreateCheckbox("Faktury zakupu", 23, 295, 121, 17)
+GUICtrlSetOnEvent($chckFakturyZakupu, "chckFakturyZakupuClick")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$lstKolejnosc = GUICtrlCreateList("", 310, 32, 340, 448, BitOR($LBS_NOTIFY, $WS_HSCROLL, $WS_VSCROLL, $WS_BORDER))
+$lstKolejnosc = GUICtrlCreateList("", 310, 32, 340, 461,  BitOR($LBS_NOTIFY, $WS_HSCROLL, $WS_VSCROLL, $WS_BORDER))
 GUICtrlSetData($lstKolejnosc, "")
 GUICtrlSetOnEvent($lstKolejnosc, "lstKolejnoscClick")
 $Label3 = GUICtrlCreateLabel("Kolejność", 310, 8, 50, 17)
@@ -103,14 +106,15 @@ $Group4 = GUICtrlCreateGroup("Magazyn", 8, 184, 225, 57)
 $cmbMagazyn = GUICtrlCreateCombo("", 15, 208, 201, 25)
 GUICtrlSetOnEvent($cmbMagazyn, "cmbMagazynChange")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-$btnStart = GUICtrlCreateButton("Start", 8, 488, 75, 25)
+$btnStart = GUICtrlCreateButton("Start", 8, 504, 75, 25)
 GUICtrlSetFont(-1, 8, 800, 0, "MS Sans Serif")
 GUICtrlSetOnEvent(-1, "btnStartClick")
-$chckZaznaczWszystkie = GUICtrlCreateCheckbox("Zaznacz wszystkie", 24, 448, 137, 17)
+$chckZaznaczWszystkie = GUICtrlCreateCheckbox("Zaznacz wszystkie", 24, 472, 137, 17)
 GUICtrlSetFont(-1, 8, 800, 0, "MS Sans Serif")
 GUICtrlSetOnEvent(-1, "chckZaznaczWszystkieClick")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 #EndRegion ### END Koda GUI section ###
+
 
 ;#############################################################################################################################
 ;#############################################################################################################################
@@ -119,7 +123,7 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 ;#############################################################################################################################
 
 ;Tablica zawiera uchwyty do checkboksow z wyborem listy do wykonywania
-Global $checkBoxes[8] = [$chckSprzedazDetaliczna, $chckWydMag, $chckWydMagRozchodWewnetrzny, _
+Global $checkBoxes[9] = [$chckSprzedazDetaliczna, $chckFakturyZakupu, $chckWydMag, $chckWydMagRozchodWewnetrzny, _
 		$chckWydMagPrzesuniecieMiedzymagazynowe, $chckPrzyjMag, _
 		$chckPrzyjMagPrzychodWewnetrzny, $chckZwrotyDetaliczne, $chckZaznaczWszystkie]
 
@@ -141,7 +145,7 @@ Global $_Podmiot = "" ;Nazwa podmiotu
 ;#############################################################################################################################
 ;#############################################################################################################################
 
-uruchomZamknacSubiekta() ;zamykanie subiekta jesli jest wlaczony
+uruchomZamknacSubiekta() ;zamykanie subiekta jesli jest wlaczone
 utworzPlikKonfiguracyjny() ;tworzenie pliku konfiguracyjnego
 sprawdzCzyJestSubiekt() ;sprawdzanie czy program subiekt istnieje
 przygotowanieGUI() ;pobieranie magazynow i ustawianie w GUI
@@ -259,7 +263,10 @@ Func sprawdzCzyJestSubiekt()
 	;ustawiamy sciezke do programu subiekt
 	$_SciezkaUruchomieniaSubiekta = $pathSubiekt & '\Subiekt.exe "' & @ScriptDir & '\SubiektBot.xml"'
 	Run($_SciezkaUruchomieniaSubiekta, "") ;uruchomienie subiekta
-	While czySubiektUruchomiony($_nazwaOknaSubiekta) <> 0 ;Czekamy az subiekt sie zaladuje
+	$czyUruchomiony = 1
+	While $czyUruchomiony <> 0 ;Czekamy az subiekt sie zaladuje
+		$czyUruchomiony = czySubiektUruchomiony($_nazwaOknaSubiekta)
+		logs($czyUruchomiony)
 		Sleep(1000)
 	WEnd
 	$_UchwytyKontrolek.Add($SUBIEKT, WinGetHandle($_nazwaOknaSubiekta)) ; zapisujemy uchwyt subiekta
@@ -271,16 +278,22 @@ EndFunc   ;==>sprawdzCzyJestSubiekt
 Func przygotowanieGUI()
 	dodajStatus("Przygotowywanie interfejsu uzytkownika")
 	pobierzUchwytFiltrow() ;pobieramy uchwyty to wszystkich filtrow i list
-	$magTmp = pobierzListeMagazynow() ;pobieramy liste dostepnych magazynow
+	logs("Pobieranie magazynow")
+	$magTmp = pobierzListeMagazynow()
+	Do
+		$magTmp = pobierzListeMagazynow() ;pobieramy liste dostepnych magazynow
+	Until UBound($magTmp) > 0
 	;zapisujemy w tablicy stan checkboksow na nie zaznaczony
-	ReDim $_Magazyny[UBound($magTmp)][8]
+	ReDim $_Magazyny[UBound($magTmp)][UBound($checkBoxes)]
 	For $i = 0 To UBound($magTmp) - 1
-		For $j = 0 To 7
+		logs($magTmp[$i])
+		For $j = 0 To UBound($checkBoxes) - 1
 			$_Magazyny[$i][$j] = 4
 		Next
 		If $magTmp[$i] <> "" Then $_ListaMagazynow.add(StringLeft($magTmp[$i], 3), $magTmp[$i]) ;tworzymy liste magazynow 3-znakowy skrot
 	Next
 
+	logs($magTmp[0])
 	GUICtrlSetData($cmbMagazyn, _ArrayToString($magTmp)) ;ustawiamy liste dla wyboru magazynow
 	_GUICtrlComboBox_SetCurSel($cmbMagazyn, 0) ; ustawiamy na magazyn pierwszy jako wybrany
 	$aktMagTxt = StringLeft($magTmp[0], 3) ;zapisujemy aktualnie wybrany magazyn
@@ -294,7 +307,7 @@ EndFunc   ;==>przygotowanieGUI
 Func uruchomOkienkoOczekiwania()
 
 	#Region ### START Koda GUI section ### Form=
-	$GuiOczekiwanie = GUICreate("Przygotowanie do pracy", 346, 127, -1, -1, BitOR($WS_BORDER, $WS_POPUP), BitOR($WS_EX_TOPMOST, $WS_EX_TOOLWINDOW))
+	$GuiOczekiwanie = GUICreate("Przygotowanie do pracy", 346, 127, -1, 200, BitOR($WS_BORDER, $WS_POPUP), BitOR($WS_EX_TOPMOST, $WS_EX_TOOLWINDOW))
 	$Label1 = GUICtrlCreateLabel("Trwa przygotowywanie programu Subiekt GT do pracy.", 48, 48, 263, 17)
 	$Label2 = GUICtrlCreateLabel("Proszę czekać...", 48, 64, 83, 17)
 	GUISetState(@SW_SHOW)
@@ -373,7 +386,7 @@ EndFunc   ;==>btnStartClick
 Func cmbMagazynChange()
 	$aktMag = _GUICtrlComboBox_GetCurSel($cmbMagazyn) ;ustawienie numeru aktualnego magazynu
 	$aktMagTxt = StringLeft(GUICtrlRead($cmbMagazyn), 3) ;ustawienie nazwy aktualnego magazynu
-	For $i = 0 To 7
+	For $i = 0 To UBound($checkBoxes) - 1
 		GUICtrlSetState($checkBoxes[$i], $_Magazyny[$aktMag][$i]) ;ustawiamy checkboxy tak jak byly zapisane wczesniej
 	Next
 EndFunc   ;==>cmbMagazynChange
@@ -384,7 +397,7 @@ Func btnWyczyscClick()
 	ReDim $_WybraneListyDoWykonania[0]
 	GUICtrlSetData($lstKolejnosc, $_WybraneListyDoWykonania)
 	For $j = 0 To UBound($_Magazyny) - 1
-		For $i = 0 To 7
+		For $i = 0 To UBound($checkBoxes) - 1
 			$_Magazyny[$j][$i] = $GUI_UNCHECKED
 			GUICtrlSetState($checkBoxes[$i], $_Magazyny[$j][$i])
 		Next
@@ -437,15 +450,15 @@ Func chckPrzyjMagPrzychodWewnetrznyClick()
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
 		GUICtrlSetState($chckPrzyjMag, $GUI_CHECKED) ;ustawiamy nadrzedny chck jako zaznaczony
-		$_Magazyny[$aktMag][4] = 1 ;aktualizujemy tablice stanow chck dla obu chck
-		$_Magazyny[$aktMag][5] = 1
+		$_Magazyny[$aktMag][5] = 1 ;aktualizujemy tablice stanow chck dla obu chck
+		$_Magazyny[$aktMag][6] = 1
 	Else ;w przeciwnym razie to samo tylko odznaczamy i usuwamy
 		$_WybraneListyDoWykonania = removeEl("     Przychód wewnętrzny (Przyjęcia magazynowe) [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
 		GUICtrlSetState($chckPrzyjMag, $GUI_UNCHECKED)
-		$_Magazyny[$aktMag][4] = 4
 		$_Magazyny[$aktMag][5] = 4
+		$_Magazyny[$aktMag][6] = 4
 	EndIf
 EndFunc   ;==>chckPrzyjMagPrzychodWewnetrznyClick
 
@@ -464,6 +477,22 @@ Func chckSprzedazDetalicznaClick()
 		$_Magazyny[$aktMag][0] = 4
 	EndIf
 EndFunc   ;==>chckSprzedazDetalicznaClick
+
+;-----------------------------------------------------------------------------------------------------------------------------
+;analogicznie jak powyzej tylko ta lista dokumentow nie ma podrzednych ani nadrzednych chck
+Func chckFakturyZakupuClick()
+	If GUICtrlRead($chckFakturyZakupu) = $GUI_CHECKED Then
+		$_WybraneListyDoWykonania = addEl("     Faktury zakupu [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
+		GUICtrlSetData($lstKolejnosc, "")
+		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
+		$_Magazyny[$aktMag][1] = 1
+	Else
+		$_WybraneListyDoWykonania = removeEl("     Faktury zakupu [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
+		GUICtrlSetData($lstKolejnosc, "")
+		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
+		$_Magazyny[$aktMag][1] = 4
+	EndIf
+EndFunc   ;==>chckFakturyZakupuClick
 
 ;-----------------------------------------------------------------------------------------------------------------------------
 Func chckWydMagClick()
@@ -487,16 +516,16 @@ Func chckWydMagPrzesuniecieMiedzymagazynoweClick()
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
 		GUICtrlSetState($chckWydMag, $GUI_CHECKED)
-		$_Magazyny[$aktMag][1] = 1
-		$_Magazyny[$aktMag][3] = 1
+		$_Magazyny[$aktMag][2] = 1
+		$_Magazyny[$aktMag][4] = 1
 	Else
 		$_WybraneListyDoWykonania = removeEl("     Przesunięcie międzymagazynowe (Wydania magazynowe) [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
-		$_Magazyny[$aktMag][3] = 4
+		$_Magazyny[$aktMag][4] = 4
 		If GUICtrlRead($chckWydMagRozchodWewnetrzny) = $GUI_UNCHECKED Then
 			GUICtrlSetState($chckWydMag, $GUI_UNCHECKED)
-			$_Magazyny[$aktMag][1] = 4
+			$_Magazyny[$aktMag][2] = 4
 		EndIf
 	EndIf
 EndFunc   ;==>chckWydMagPrzesuniecieMiedzymagazynoweClick
@@ -508,16 +537,16 @@ Func chckWydMagRozchodWewnetrznyClick()
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
 		GUICtrlSetState($chckWydMag, $GUI_CHECKED)
-		$_Magazyny[$aktMag][1] = 1
 		$_Magazyny[$aktMag][2] = 1
+		$_Magazyny[$aktMag][3] = 1
 	Else
 		$_WybraneListyDoWykonania = removeEl("     Rozchód wewnętrzny (Wydania magazynowe) [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
-		$_Magazyny[$aktMag][2] = 4
+		$_Magazyny[$aktMag][3] = 4
 		If GUICtrlRead($chckWydMagPrzesuniecieMiedzymagazynowe) = $GUI_UNCHECKED Then
 			GUICtrlSetState($chckWydMag, $GUI_UNCHECKED)
-			$_Magazyny[$aktMag][1] = 4
+			$_Magazyny[$aktMag][2] = 4
 		EndIf
 	EndIf
 EndFunc   ;==>chckWydMagRozchodWewnetrznyClick
@@ -528,12 +557,12 @@ Func chckZwrotyDetaliczneClick()
 		$_WybraneListyDoWykonania = addEl("     Zwroty detaliczne [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
-		$_Magazyny[$aktMag][6] = 1
+		$_Magazyny[$aktMag][7] = 1
 	Else
 		$_WybraneListyDoWykonania = removeEl("     Zwroty detaliczne [" & $aktMagTxt & "]", $_WybraneListyDoWykonania)
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
-		$_Magazyny[$aktMag][6] = 4
+		$_Magazyny[$aktMag][7] = 4
 	EndIf
 EndFunc   ;==>chckZwrotyDetaliczneClick
 
@@ -546,11 +575,12 @@ Func chckZaznaczWszystkieClick()
 	Else
 		$status = 4
 	EndIf
-	For $i = 0 To 7
+	For $i = 0 To UBound($checkBoxes) - 1
 		$_Magazyny[$aktMag][$i] = $status
 		GUICtrlSetState($checkBoxes[$i], $_Magazyny[$aktMag][$i])
 	Next
 	chckSprzedazDetalicznaClick()
+	chckFakturyZakupuClick()
 	chckWydMagClick()
 	chckPrzyjMagClick()
 	chckZwrotyDetaliczneClick()
@@ -562,7 +592,7 @@ EndFunc   ;==>chckZaznaczWszystkieClick
 
 ;-----------------------------------------------------------------------------------------------------------------------------
 ;zamykanie programu po wcisnieciu krzyzyka
-Func Form1Close()
+Func WOSMBotClose()
 	GUIDelete()
 	Exit
 EndFunc   ;==>Form1Close
@@ -581,15 +611,15 @@ Func dataOdChange()
 EndFunc   ;==>dataOdChange
 
 ;-----------------------------------------------------------------------------------------------------------------------------
-Func Form1Maximize()
+Func WOSMBotMaximize()
 EndFunc   ;==>Form1Maximize
 
 ;-----------------------------------------------------------------------------------------------------------------------------
-Func Form1Minimize()
+Func WOSMBotMinimize()
 EndFunc   ;==>Form1Minimize
 
 ;-----------------------------------------------------------------------------------------------------------------------------
-Func Form1Restore()
+Func WOSMBotRestore()
 EndFunc   ;==>Form1Restore
 
 
@@ -613,20 +643,23 @@ Func radioOdkladanieClick()
 					$aktMag = $index - 1
 					_GUICtrlComboBox_SetCurSel($cmbMagazyn, $index)
 				Else
-					Switch (StringLeft($tmp[$i], 22))
-						Case "     Przychód wewnętrz"
+					Switch (StringLeft($tmp[$i], 19))
+						Case "     Przychód wewnę"
 							GUICtrlSetState($chckPrzyjMagPrzychodWewnetrzny, $GUI_CHECKED)
 							chckPrzyjMagPrzychodWewnetrznyClick()
-						Case "     Sprzedaż detalicz"
+						Case "     Sprzedaż detal"
 							GUICtrlSetState($chckSprzedazDetaliczna, $GUI_CHECKED)
 							chckSprzedazDetalicznaClick()
-						Case "     Przesunięcie międ"
+						Case "     Faktury zakupu"
+							GUICtrlSetState($chckFakturyZakupu, $GUI_CHECKED)
+							chckFakturyZakupuClick()
+						Case "     Przesunięcie m"
 							GUICtrlSetState($chckWydMagPrzesuniecieMiedzymagazynowe, $GUI_CHECKED)
 							chckWydMagPrzesuniecieMiedzymagazynoweClick()
-						Case "     Rozchód wewnętrzn"
+						Case "     Rozchód wewnęt"
 							GUICtrlSetState($chckWydMagRozchodWewnetrzny, $GUI_CHECKED)
 							chckWydMagRozchodWewnetrznyClick()
-						Case "     Zwroty detaliczne"
+						Case "     Zwroty detalic"
 							GUICtrlSetState($chckZwrotyDetaliczne, $GUI_CHECKED)
 							chckZwrotyDetaliczneClick()
 					EndSwitch
@@ -638,6 +671,7 @@ Func radioOdkladanieClick()
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
 		_GUICtrlComboBox_SetCurSel($cmbMagazyn, $aktMag)
+		cmbMagazynChange()
 	EndIf
 EndFunc   ;==>radioOdkladanieClick
 
@@ -657,20 +691,23 @@ Func radioWywolywanieClick()
 					$aktMag = $index - 1
 					_GUICtrlComboBox_SetCurSel($cmbMagazyn, $index)
 				Else
-					Switch (StringLeft($tmp[$i], 22))
-						Case "     Przychód wewnętrz"
+					Switch (StringLeft($tmp[$i], 19))
+						Case "     Przychód wewnę"
 							GUICtrlSetState($chckPrzyjMagPrzychodWewnetrzny, $GUI_CHECKED)
 							chckPrzyjMagPrzychodWewnetrznyClick()
-						Case "     Sprzedaż detalicz"
+						Case "     Sprzedaż detal"
 							GUICtrlSetState($chckSprzedazDetaliczna, $GUI_CHECKED)
 							chckSprzedazDetalicznaClick()
-						Case "     Przesunięcie międ"
+						Case "     Faktury zakupu"
+							GUICtrlSetState($chckFakturyZakupu, $GUI_CHECKED)
+							chckFakturyZakupuClick()
+						Case "     Przesunięcie m"
 							GUICtrlSetState($chckWydMagPrzesuniecieMiedzymagazynowe, $GUI_CHECKED)
 							chckWydMagPrzesuniecieMiedzymagazynoweClick()
-						Case "     Rozchód wewnętrzn"
+						Case "     Rozchód wewnęt"
 							GUICtrlSetState($chckWydMagRozchodWewnetrzny, $GUI_CHECKED)
 							chckWydMagRozchodWewnetrznyClick()
-						Case "     Zwroty detaliczne"
+						Case "     Zwroty detalic"
 							GUICtrlSetState($chckZwrotyDetaliczne, $GUI_CHECKED)
 							chckZwrotyDetaliczneClick()
 					EndSwitch
@@ -682,6 +719,7 @@ Func radioWywolywanieClick()
 		GUICtrlSetData($lstKolejnosc, "")
 		GUICtrlSetData($lstKolejnosc, toString($_WybraneListyDoWykonania))
 		_GUICtrlComboBox_SetCurSel($cmbMagazyn, $aktMag)
+		cmbMagazynChange()
 	EndIf
 EndFunc   ;==>radioWywolywanieClick
 

@@ -4,7 +4,7 @@
 		<sql_server>XERO\INSERTGT</sql_server>
 		<auth_mode>MIXED</auth_mode>
 		<sql_login encrypted="0">sa\</sql_login>
-		<database>ARCTUS_2011</database>
+		<database>ARCTUS_2011_TEST</database>
 		<login encrypted="0">Szef\</login>
 	</startup>
 	<menu_view>

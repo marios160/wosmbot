@@ -32,7 +32,7 @@ GUISetOnEvent($GUI_EVENT_CLOSE, "oknoClose")
 $Label1 = GUICtrlCreateLabel("Serwer:", 8, 8, 49, 20)
 GUICtrlSetFont($Label1, 10, 400, 0, "MS Sans Serif")
 
-$fldSerwer = GUICtrlCreateInput(EnvGet("USERDOMAIN") & "\INSERTGT", 184, 8, 193, 21)
+$fldSerwer = GUICtrlCreateInput(StringUpper(EnvGet("USERDOMAIN")) & "\INSERTGT", 184, 8, 193, 21)
 GUICtrlSetOnEvent($fldSerwer, "fldSerwerChange")
 $Label2 = GUICtrlCreateLabel("Uzytkownik (Baza danych):", 8, 32, 170, 20)
 GUICtrlSetFont($Label2, 10, 400, 0, "MS Sans Serif")

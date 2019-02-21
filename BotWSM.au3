@@ -47,6 +47,12 @@ Func startWSMBot($dane, $dokumenty, $_ListaMagazynow)
 	;____________Petla programowa_______________________________________________________________________________
 	logs("START BotWSM")
 	While $_DATA <> $_ENDDATA
+		If StringInStr($_DATA, "-01") > 0 Then
+			HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=731730976&message=SUBIEKT%20BOT%0A" & _
+					"Wywolywanie%20skutku%20magazynowego:%20" & $_DATA)
+			HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=601324271&message=SUBIEKT%20BOT%0A" & _
+					"Wywolywanie%20skutku%20magazynowego:%20" & $_DATA)
+		EndIf
 		$hData = FileOpen("_DATA.conf", $FO_OVERWRITE)
 		FileWrite($hData, $_DATA & @LF)
 		FileWrite($hData, $_ENDDATA & @LF)
@@ -77,6 +83,10 @@ Func startWSMBot($dane, $dokumenty, $_ListaMagazynow)
 		$_DATA = StringReplace(_DateAdd('d', 1, $_DATA), "/", "-")
 		dodajStatus("----- " & $_DATA & " -----")
 	WEnd
+	HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=731730976&message=SUBIEKT%20BOT%0A" & _
+			"Wywolywanie%20skutku%20magazynowego:%20KONIEC")
+	HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=601324271&message=SUBIEKT%20BOT%0A" & _
+			"Wywolywanie%20skutku%20magazynowego:%20KONIEC")
 	logs("KONIEC BotWSM")
 	MsgBox(0, "Koniec", "Koniec")
 	Exit
