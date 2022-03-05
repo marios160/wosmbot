@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <cfg>
 	<startup>
-		<sql_server>MATI\INSERTGT</sql_server>
+		<sql_server>ARCTUS-SRV\INSERTGT</sql_server>
 		<auth_mode>MIXED</auth_mode>
 		<sql_login encrypted="0">sa\</sql_login>
 		<database>ARCTUS_2011</database>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<cfg>
+	<startup>
+		<sql_server>XERO\INSERTGT</sql_server>
+		<auth_mode>MIXED</auth_mode>
+		<sql_login encrypted="0">sa\</sql_login>
+		<database>ARCTUS_2011</database>
+		<login encrypted="0">Szef\s</login>
+	</startup>
+	<menu_view>
+		<menu_popup image="0" label="&amp;Sprzedaż">
+			
+			<menu_item style="0" progid="Subiekt.WidokPA.1" accel_key="2" accel_modifier="1" params="" visible="1" label="Sprzedaż &amp;detaliczna"/>
+			<menu_item style="0" progid="Subiekt.WidokZW.1" params="" visible="1" label="&amp;Zwroty detaliczne"/>
+		</menu_popup>
+		<menu_popup image="1" label="&amp;Zakup">
+			<menu_item style="0" progid="Subiekt.WidokFZ.1" accel_key="3" accel_modifier="1" params="" visible="1" label="&amp;Faktury zakupu"/>
+		</menu_popup>
+		<menu_popup image="2" label="&amp;Magazyn">
+			<menu_item style="0" progid="Subiekt.WidokMagW.1" accel_key="4" accel_modifier="1" params="" visible="1" label="&amp;Wydania magazynowe"/>
+			<menu_item style="0" progid="Subiekt.WidokMagP.1" accel_key="5" accel_modifier="1" params="" visible="1" label="&amp;Przyjęcia magazynowe"/>
+		</menu_popup>
+	</menu_view>
+	<version>1.52</version>
+</cfg>

@@ -1,9 +1,9 @@
 MAG
-     Faktury zakupu [MAG]
      Zwroty detaliczne [MAG]
+     Sprzeda¿ detaliczna [MAG]
 ABR
-     Faktury zakupu [ABR]
      Zwroty detaliczne [ABR]
+     Sprzeda¿ detaliczna [ABR]
 MAG
      Rozchód wewnêtrzny (Wydania magazynowe) [MAG]
      Przesuniêcie miêdzymagazynowe (Wydania magazynowe) [MAG]
@@ -12,3 +12,19 @@ ABR
      Rozchód wewnêtrzny (Wydania magazynowe) [ABR]
      Przesuniêcie miêdzymagazynowe (Wydania magazynowe) [ABR]
      Przychód wewnêtrzny (Przyjêcia magazynowe) [ABR]
+KUN
+     Rozchód wewnêtrzny (Wydania magazynowe) [KUN]
+     Przesuniêcie miêdzymagazynowe (Wydania magazynowe) [KUN]
+     Przychód wewnêtrzny (Przyjêcia magazynowe) [KUN]
+HUR
+     Zwroty detaliczne [HUR]
+     Sprzeda¿ detaliczna [HUR]
+     Rozchód wewnêtrzny (Wydania magazynowe) [HUR]
+     Przesuniêcie miêdzymagazynowe (Wydania magazynowe) [HUR]
+     Przychód wewnêtrzny (Przyjêcia magazynowe) [HUR]
+TAR
+     Zwroty detaliczne [TAR]
+     Sprzeda¿ detaliczna [TAR]
+     Rozchód wewnêtrzny (Wydania magazynowe) [TAR]
+     Przesuniêcie miêdzymagazynowe (Wydania magazynowe) [TAR]
+     Przychód wewnêtrzny (Przyjêcia magazynowe) [TAR]
