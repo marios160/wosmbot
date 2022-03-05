@@ -92,7 +92,6 @@ Global $MNU_PODMIOT = "&Podmiot"
 Global $MNU_WIDOK = "&Widok"
 Global $MNU_DODAJ = "&Dodaj"
 Global $MNU_PARAGON = "P&aragon"
-Global $MNU_FAKTURA = "&Faktura"
 Global $MNU_OPERACJE = "&Operacje"
 Global $MNU_NARZEDZIA = "&Narzędzia"
 Global $MNU_POMOC = "Pomo&c"
@@ -100,7 +99,6 @@ Global $MNU_POMOC = "Pomo&c"
 Global $SUB_ODLOZ_SKUTEK_MAGAZYNOWY = "Odłóż skutek &magazynowy"
 Global $SUB_WYWOLAJ_SKUTEK_MAGAZYNOWY_W = "&Wywołaj skutek magazynowy"
 Global $SUB_WYWOLAJ_SKUTEK_MAGAZYNOWY_S = "Wywołaj &skutek magazynowy"
-Global $SUB_POPRAW = "&Popraw"
 Global $SUB_SPRZEDAZ = "&Sprzedaż"
 Global $SUB_ZAKUP = "&Zakup"
 Global $SUB_MAGAZYN = "&Magazyn"
@@ -193,9 +191,9 @@ Func wywolajSkutekMagazynowy($lista)
 		If $j > 3 Then ;jesli ponmad 3 razy nie udalo sie wywolac skutku to znaczy ze jest jakis blad
 			If ControlFocus(uchwytSubiekta(), "", "") = 0 Then ; jesli nie mozemy zlapac fokusa to znaczy ze wyskoczyl nieznany komunikat w subiekcie
 				HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=731730976&message=SUBIEKT%20BOT%0A" & _
-						"ERROR")
+					"ERROR")
 				HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=601324271&message=SUBIEKT%20BOT%0A" & _
-						"ERROR")
+					"ERROR")
 				MsgBox(0, "Koniec", "Koniec")
 				Exit
 			Else ;w przeciwnym razie oslablo polaczenie z baza i trzeba zrestartowac subiekta
@@ -207,9 +205,7 @@ Func wywolajSkutekMagazynowy($lista)
 		;zaleznie od listy inaczej jest wywolywanie skutku
 		If $listaKopiuj = $LST_PRZYJECIA_MAGAZYNOWE Or $listaKopiuj = $LST_WYDANIA_MAGAZYNOWE Then
 			WinMenuSelectItem(uchwytSubiekta(), "", $MNU_OPERACJE, $SUB_WYWOLAJ_SKUTEK_MAGAZYNOWY_S)
-		 ;ElseIf $listaKopiuj = $LST_FAKTURY_ZAKUPU Then
-			;wywolajSkutekMagazynowyFakturyZakupu();
-		 Else
+		Else
 			WinMenuSelectItem(uchwytSubiekta(), "", $MNU_OPERACJE, $SUB_WYWOLAJ_SKUTEK_MAGAZYNOWY_W)
 		EndIf
 		Do ;w petli czekamy na rozne komunikaty
@@ -229,9 +225,6 @@ Func wywolajSkutekMagazynowy($lista)
 			If $brakTowaru <> 0 Then
 				zapiszBrakTowaru($lista) ;jak brak towaru to trzeba zapisac do pliku
 			EndIf
-
-				ConsoleWrite(uchwytSubiekta() + $i)
-
 			$i = $i + 1
 		Until $i >= 500 Or StringInStr(kopiujWierszSzybko($listaKopiuj), $STR_WYWOLUJE_SKUTEK) > 0
 		$j = $j + 1
@@ -274,9 +267,9 @@ Func odlozSkutekMagazynowy($lista)
 		If $j > 3 Then
 			If ControlFocus(uchwytSubiekta(), "", "") = 0 Then
 				HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=731730976&message=SUBIEKT%20BOT%0A" & _
-						"ERROR")
+					"ERROR")
 				HttpGet("http://192.168.0.248/index.php/http_api/send_sms?login=backup&pass=Haslonasmseagle&to=601324271&message=SUBIEKT%20BOT%0A" & _
-						"ERROR")
+					"ERROR")
 				MsgBox(0, "Koniec", "Koniec")
 				Exit
 			Else
@@ -308,26 +301,6 @@ Func odlozSkutekMagazynowy($lista)
 	Return True
 EndFunc   ;==>odlozSkutekMagazynowy
 
-;---------------------------------------------------------------------------------------------------------------------
-;Faktury zakupu wymagają specjalnego wywoływania
-; Wejście w szczegóły i ustawienie wywołania
-
-Func wywolajSkutekMagazynowyFakturyZakupu()
-   WinMenuSelectItem(uchwytSubiekta(), "", $MNU_FAKTURA, $SUB_POPRAW)
-   logs('@@ (317) :(' & @MIN & ':' & @SEC & ') wywolajSkutekMagazynowyFakturyZakupu()' & @CR) ;### Function Trace
-	$hWnd = WinGetHandle("[TITLE:Rachunek zakupu;CLASS:#32770]")		; nazwa okna ze szczegółami
-	$uchwyt = _WinAPI_GetWindow($hWnd, $GW_CHILD)
-	While StringInStr(_WinAPI_GetWindowText($uchwyt), "Czy na pewno wykonać operację zmiany skutku magazynowego?") = 0 And $uchwyt <> 0
-		$uchwyt = _WinAPI_GetWindow($uchwyt, $GW_HWNDNEXT)
-	WEnd
-	$uchwyt = _WinAPI_GetWindow($hWnd, $GW_CHILD)
-	While StringInStr(_WinAPI_GetWindowText($uchwyt), "&Tak") = 0 And $uchwyt <> 0
-		$uchwyt = _WinAPI_GetWindow($uchwyt, $GW_HWNDNEXT)
-	WEnd
-
-	ControlSend($uchwyt, "", "", "T")
-	Return $hWnd
-EndFunc
 
 ;---------------------------------------------------------------------------------------------------------------------
 ;Ustawia filtry listy na domyslne
@@ -896,7 +869,7 @@ Func ustawKolumnyListy($lista)
 		$kopiaListy = kopiujListe($lista)
 	WEnd
 	$tmp2 = StringSplit($kopiaListy, "	", 2)
-	While $tmp2[0] <> "S" Or ($tmp2[1] <> "Data" And $tmp2[1] <> "Wystawiono") Or StringReplace($tmp2[2], @CRLF, "") <> "Numer"
+	While $tmp2[0] <> "S" Or $tmp2[1] <> "Data" Or StringReplace($tmp2[2], @CRLF, "") <> "Numer"
 		$hWnd = 0
 		While $hWnd = 0
 			ControlSend(HWnd($_UchwytyKontrolek.Item($lista).Item($CLS_GXWND)), "", "", "{CTRLDOWN}{SHIFTDOWN}k{CTRLUP}{SHIFTUP}")
@@ -919,7 +892,7 @@ EndFunc   ;==>ustawKolumnyListy
 Func pobierzUchwytFiltrow()
 	logs('@@ (848) :(' & @MIN & ':' & @SEC & ') pobierzUchwytFiltrow()' & @CR) ;### Function Trace
 	ControlFocus("", "", uchwytSubiekta())
-	wybierzListe($LST_FAKTURY_ZAKUPU)
+	;wybierzListe($LST_FAKTURY_ZAKUPU)
 	wybierzListe($LST_WYDANIA_MAGAZYNOWE)
 	wybierzListe($LST_PRZYJECIA_MAGAZYNOWE)
 	wybierzListe($LST_ZWROTY_DETALICZNE)
@@ -931,14 +904,14 @@ Func pobierzUchwytFiltrow()
 	$_UchwytyKontrolek.Item($LST_SPRZEDAZ_DETALICZNA).add($HWND_KATEGORIA, zapiszUchwytFiltry($LST_SPRZEDAZ_DETALICZNA, $FLT_O_KATEGORII_NS))
 	$_UchwytyKontrolek.Item($LST_SPRZEDAZ_DETALICZNA).add($HWND_FLAGA, zapiszUchwytFiltry($LST_SPRZEDAZ_DETALICZNA, $FLT_Z_FLAGA))
 	$_UchwytyKontrolek.Item($LST_SPRZEDAZ_DETALICZNA).Add($CLS_GXWND, zapiszUchwytGXWND($LST_SPRZEDAZ_DETALICZNA))
-	$_UchwytyKontrolek.Add($LST_FAKTURY_ZAKUPU, ObjCreate("Scripting.Dictionary"))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_WEDLUG, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_DOKUMENTY_WG))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_OKRES, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_Z_OKRESU))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_TYPU, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_TYPU))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_STAN, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_O_STANIE_NP))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_KATEGORIA, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_O_KATEGORII))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_FLAGA, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_Z_FLAGA))
-	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).Add($CLS_GXWND, zapiszUchwytGXWND($LST_FAKTURY_ZAKUPU))
+;~ 	$_UchwytyKontrolek.Add($LST_FAKTURY_ZAKUPU, ObjCreate("Scripting.Dictionary"))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_WEDLUG, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_DOKUMENTY_WG))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_OKRES, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_Z_OKRESU))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_TYPU, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_TYPU))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_STAN, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_O_STANIE_NP))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_KATEGORIA, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_O_KATEGORII))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).add($HWND_FLAGA, zapiszUchwytFiltry($LST_FAKTURY_ZAKUPU, $FLT_Z_FLAGA))
+;~ 	$_UchwytyKontrolek.Item($LST_FAKTURY_ZAKUPU).Add($CLS_GXWND, zapiszUchwytGXWND($LST_FAKTURY_ZAKUPU))
 	$_UchwytyKontrolek.Add($LST_WYDANIA_MAGAZYNOWE, ObjCreate("Scripting.Dictionary"))
 	$_UchwytyKontrolek.Item($LST_WYDANIA_MAGAZYNOWE).add($HWND_OKRES, zapiszUchwytFiltry($LST_WYDANIA_MAGAZYNOWE, $FLT_DOKUMENTY_Z_OKRESU))
 	$_UchwytyKontrolek.Item($LST_WYDANIA_MAGAZYNOWE).add($HWND_TYPU, zapiszUchwytFiltry($LST_WYDANIA_MAGAZYNOWE, $FLT_TYPU))
@@ -959,18 +932,15 @@ Func pobierzUchwytFiltrow()
 	$_UchwytyKontrolek.Item($LST_ZWROTY_DETALICZNE).add($HWND_KATEGORIA, zapiszUchwytFiltry($LST_ZWROTY_DETALICZNE, $FLT_O_KATEGORII_NS))
 	$_UchwytyKontrolek.Item($LST_ZWROTY_DETALICZNE).add($HWND_FLAGA, zapiszUchwytFiltry($LST_ZWROTY_DETALICZNE, $FLT_Z_FLAGA_NS))
 	$_UchwytyKontrolek.Item($LST_ZWROTY_DETALICZNE).Add($CLS_GXWND, zapiszUchwytGXWND($LST_ZWROTY_DETALICZNE))
-	ustawKolumnyListy($LST_FAKTURY_ZAKUPU)
+;~ 	ustawKolumnyListy($LST_FAKTURY_ZAKUPU)
 	ustawKolumnyListy($LST_WYDANIA_MAGAZYNOWE)
 	ustawKolumnyListy($LST_PRZYJECIA_MAGAZYNOWE)
 	ustawKolumnyListy($LST_ZWROTY_DETALICZNE)
 	ustawKolumnyListy($LST_SPRZEDAZ_DETALICZNA)
-	;------magazyn------
-	$mag = 0
-	Do
-		$mag = pobierzUchwytMagazynow()
-	Until $mag <> 0
-	$_UchwytyKontrolek.Add($CTR_MAGAZYN, pobierzUchwytMagazynow())
+	Sleep(5000)
 
+	;------magazyn------
+	$_UchwytyKontrolek.Add($CTR_MAGAZYN, pobierzUchwytMagazynow())
 EndFunc   ;==>pobierzUchwytFiltrow
 
 ;---------------------------------------------------------------------------------------------------------------------
